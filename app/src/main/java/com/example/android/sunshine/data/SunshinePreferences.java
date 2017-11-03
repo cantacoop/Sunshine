@@ -41,8 +41,13 @@ public class SunshinePreferences {
      * @param lat      The latitude of the city
      * @param lon      The longitude of the city
      */
-    static public void setLocationDetails(Context c, String cityName, double lat, double lon) {
-        /** This will be implemented in a future lesson **/
+    static public void setLocationDetails(Context context, double lat, double lon) {
+        SharedPreferences sp = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = sp.edit();
+
+        editor.putLong(PREF_COORD_LAT, Double.doubleToRawLongBits(lat));
+        editor.putLong(PREF_COORD_LONG, Double.doubleToRawLongBits(lon));
+        editor.apply();
     }
 
     /**
