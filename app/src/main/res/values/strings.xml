@@ -21,6 +21,8 @@
 
     <string name="error_message">An error has occurred. Please try again by clicking REFRESH</string>
 
+    <string name="content_authority">com.example.android.sunshine</string>
+
     <!-- - - - - - - - - - - -->
     <!--Used by Preferences  -->
     <!-- - - - - - - - - - - -->
