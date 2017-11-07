@@ -146,7 +146,104 @@ public class WeatherProvider extends ContentProvider {
      */
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-        return null;
+        Cursor cursor;
+
+        /*
+         * Here's the switch statement that, given a URI, will determine what kind of request is
+         * being made and query the database accordingly.
+         */
+        switch (sUriMatcher.match(uri)) {
+
+            /*
+             * When sUriMatcher's match method is called with a URI that looks something like this
+             *
+             *      content://com.example.android.sunshine/weather/1472214172
+             *
+             * sUriMatcher's match method will return the code that indicates to us that we need
+             * to return the weather for a particular date. The date in this code is encoded in
+             * milliseconds and is at the very end of the URI (1472214172) and can be accessed
+             * programmatically using Uri's getLastPathSegment method.
+             *
+             * In this case, we want to return a cursor that contains one row of weather data for
+             * a particular date.
+             */
+            case CODE_WEATHER_WITH_DATE: {
+
+                /*
+                 * In order to determine the date associated with this URI, we look at the last
+                 * path segment. In the comment above, the last path segment is 1472214172 and
+                 * represents the number of seconds since the epoch, or UTC time.
+                 */
+                String normalizedUtcDateString = uri.getLastPathSegment();
+
+                /*
+                 * The query method accepts a string array of arguments, as there may be more
+                 * than one "?" in the selection statement. Even though in our case, we only have
+                 * one "?", we have to create a string array that only contains one element
+                 * because this method signature accepts a string array.
+                 */
+                String[] selectionArguments = new String[]{normalizedUtcDateString};
+
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        /* Table we are going to query */
+                        WeatherContract.WeatherEntry.TABLE_NAME,
+                        /*
+                         * A projection designates the columns we want returned in our Cursor.
+                         * Passing null will return all columns of data within the Cursor.
+                         * However, if you don't need all the data from the table, it's best
+                         * practice to limit the columns returned in the Cursor with a projection.
+                         */
+                        projection,
+                        /*
+                         * The URI that matches CODE_WEATHER_WITH_DATE contains a date at the end
+                         * of it. We extract that date and use it with these next two lines to
+                         * specify the row of weather we want returned in the cursor. We use a
+                         * question mark here and then designate selectionArguments as the next
+                         * argument for performance reasons. Whatever Strings are contained
+                         * within the selectionArguments array will be inserted into the
+                         * selection statement by SQLite under the hood.
+                         */
+                        WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ",
+                        selectionArguments,
+                        null,
+                        null,
+                        sortOrder);
+
+                break;
+            }
+
+            /*
+             * When sUriMatcher's match method is called with a URI that looks EXACTLY like this
+             *
+             *      content://com.example.android.sunshine/weather/
+             *
+             * sUriMatcher's match method will return the code that indicates to us that we need
+             * to return all of the weather in our weather table.
+             *
+             * In this case, we want to return a cursor that contains every row of weather data
+             * in our weather table.
+             */
+            case CODE_WEATHER: {
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.WeatherEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+
+                break;
+            }
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        // setNotificationUri on the cursor and then return the cursor
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
+        return cursor;
     }
 
     /**

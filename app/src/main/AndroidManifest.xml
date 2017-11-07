@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.sunshine">
 
+    <!-- This permission is necessary in order for Sunshine to perform network access. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--The manifest entry for our MainActivity. Each Activity requires a manifest entry-->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -20,6 +23,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--The manifest entry for our DetailActivity. Each Activity requires a manifest entry-->
         <activity
             android:name=".DetailActivity"
             android:parentActivityName=".MainActivity">
@@ -27,7 +32,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
+
+        <!--The manifest entry for our SettingsActivity. Each Activity requires a manifest entry-->
         <activity android:name=".SettingsActivity"></activity>
+
+        <provider
+            android:name=".data.WeatherProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"/>
     </application>
 
 </manifest>
