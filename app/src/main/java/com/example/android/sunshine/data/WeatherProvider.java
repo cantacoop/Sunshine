@@ -4,6 +4,7 @@ package com.example.android.sunshine.data;
 import android.annotation.TargetApi;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -20,9 +21,68 @@ import android.support.annotation.Nullable;
  * so in this course.
  */
 public class WeatherProvider extends ContentProvider {
+    /*
+     * These constant will be used to match URIs with the data they are looking for. We will take
+     * advantage of the UriMatcher class to make that matching MUCH easier than doing something
+     * ourselves, such as using regular expressions.
+     */
+    public static final int CODE_WEATHER = 100;
+    public static final int CODE_WEATHER_WITH_DATE = 101;
+
+    /*
+     * The URI Matcher used by this content provider. The leading "s" in this variable name
+     * signifies that this UriMatcher is a static member variable of WeatherProvider and is a
+     * common convention in Android programming.
+     */
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
 
     // Declare, but don't instantiate a WeatherDbHelper object called mOpenHelper
     private WeatherDbHelper mOpenHelper;
+
+    /**
+     * Creates the UriMatcher that will match each URI to the CODE_WEATHER and
+     * CODE_WEATHER_WITH_DATE constants defined above.
+     * <p>
+     * It's possible you might be thinking, "Why create a UriMatcher when you can use regular
+     * expressions instead? After all, we really just need to match some patterns, and we can
+     * use regular expressions to do that right?" Because you're not crazy, that's why.
+     * <p>
+     * UriMatcher does all the hard work for you. You just have to tell it which code to match
+     * with which URI, and it does the rest automagically. Remember, the best programmers try
+     * to never reinvent the wheel. If there is a solution for a problem that exists and has
+     * been tested and proven, you should almost always use it unless there is a compelling
+     * reason not to.
+     *
+     * @return A UriMatcher that correctly matches the constants for CODE_WEATHER and CODE_WEATHER_WITH_DATE
+     */
+    public static UriMatcher buildUriMatcher() {
+
+        /*
+         * All paths added to the UriMatcher have a corresponding code to return when a match is
+         * found. The code passed into the constructor of UriMatcher here represents the code to
+         * return for the root URI. It's common to use NO_MATCH as the code for this case.
+         */
+        final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
+        final String authority = WeatherContract.CONTENT_AUTHORITY;
+
+        /*
+         * For each type of URI you want to add, create a corresponding code. Preferably, these are
+         * constant fields in your class so that you can use them throughout the class and you no
+         * they aren't going to change. In Sunshine, we use CODE_WEATHER or CODE_WEATHER_WITH_DATE.
+         */
+
+        /* This URI is content://com.example.android.sunshine/weather/ */
+        matcher.addURI(authority, WeatherContract.PATH_WEATHER, CODE_WEATHER);
+
+        /*
+         * This URI would look something like content://com.example.android.sunshine/weather/1472214172
+         * The "/#" signifies to the UriMatcher that if PATH_WEATHER is followed by ANY number,
+         * that it should return the CODE_WEATHER_WITH_DATE code
+         */
+        matcher.addURI(authority, WeatherContract.PATH_WEATHER + "/#", CODE_WEATHER_WITH_DATE);
+
+        return matcher;
+    }
 
     /**
      * In onCreate, we initialize our content provider on startup. This method is called for all
