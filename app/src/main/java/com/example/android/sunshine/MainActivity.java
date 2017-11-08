@@ -156,19 +156,18 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * This method is overridden by our MainActivity class in order to handle RecyclerView item
-     * clicks.
+     * This method is for responding to clicks from our list.
      *
-     * @param weatherForDay The weather for the day that was clicked
+     * @param date Normalized UTC time that represents the local date of the weather in GMT time.
+     * @see WeatherContract.WeatherEntry#COLUMN_DATE
      */
     @Override
-    public void onClick(String weatherForDay) {
-        Context context = this;
+    public void onClick(long date) {
+        Intent weatherDetailIntent = new Intent(MainActivity.this, DetailActivity.class);
 
-        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra(Intent.EXTRA_TEXT, weatherForDay);
-
-        startActivity(intent);
+        Uri uriForDateClicked = WeatherContract.WeatherEntry.buildWeatherUriWithDate(date);
+        weatherDetailIntent.setData(uriForDateClicked);
+        startActivity(weatherDetailIntent);
     }
 
     /**
