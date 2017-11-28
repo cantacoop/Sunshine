@@ -12,6 +12,7 @@
      limitations under the License.
 -->
 
+<!-- COMPLETED (3) Create the version of activity_detail that will be used in landscape mode -->
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   - This layout displays the complete details of a given day's weather, including the date, a    -
   - weather icon and description, the high and low temperature, the humidity, pressure, and the  -
@@ -20,18 +21,14 @@
   - In order to use Android's data binding capabilities, (to avoid having to type findViewById   -
   - over and over again) we wrap this layout in a <layout></layout> tag.                         -
   -                                                                                              -
-  - Note that this is the PORTRAIT version of the layout.                                        -
+  - Note that this is the LANDSCAPE version of the layout.                                       -
   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-
-<!-- COMPLETED (31) Delete the old layout completely -->
-<!-- COMPLETED (35) Surround the entire layout with <layout/> tags for data binding -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- COMPLETED (34) Create a LinearLayout to contain two included layouts that share equal space -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
           - To efficiently re-use complete layouts, you can use the <include/> tags to embed     -
@@ -41,21 +38,19 @@
           - layout code all over the place, and any changes we wanted to make, we'd have to make -
           - twice.                                                                               -
           - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-        <!-- COMPLETED (32) Include the primary_weather_info layout -->
         <include
             android:id="@+id/primary_info"
             layout="@layout/primary_weather_info"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".55"/>
 
-        <!-- COMPLETED (33) Include the extra_weather_details layout -->
         <include
             android:id="@+id/extra_details"
             layout="@layout/extra_weather_details"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".45"/>
 
     </LinearLayout>
 </layout>
